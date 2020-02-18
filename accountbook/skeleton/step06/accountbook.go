@@ -29,12 +29,14 @@ func NewAccountBook(fileName string) *AccountBook {
 func (ab *AccountBook) AddItem(item *Item) error {
 
 	// TODO: 追記用でファイルを開く
+	file, err := os.OpenFile("accountbook.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
 	// 「品目 値段」の形式でファイルに出力する
-	if _, err := /* TODO: fmt.Printlnを使って出力 */; err != nil {
+	if _, err := /* TODO: fmt.Printlnを使って出力 */fmt.Fprintln(file, item.Category, item.Price); err != nil {
 		return err
 	}
 
@@ -78,10 +80,11 @@ func (ab *AccountBook) GetItems(limit int) ([]*Item, error) {
 	}
 
 	// TODO: itemsの後方limit件だけを返す
+	return items[:len(items)-limit], nil
 }
 
 // 1行ずつパースを行う
-func (ab *AccountBook) parseLine(line string, /* TODO: 引数を追加する */) error {
+func (ab *AccountBook) parseLine(line string, /* TODO: 引数を追加する */item *Item) error {
 	// 1行をスペースで分割する
 	splited := strings.Split(line, " ")
 	// 2つに分割できなかった場合はエラー
